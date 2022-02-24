@@ -43,6 +43,7 @@ class InputForm extends React.Component {
     }
 
     async andThen(text) {
+        console.log("---------------- andThen called ---------------")
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -52,20 +53,19 @@ class InputForm extends React.Component {
             .then(response => response.json())
             .then(data => {return data.output});
 
-        console.log('data', splitSentances);
-        var acts = splitSentances
+        console.log('--- The Split Sentances', splitSentances);
+        const acts = [];
         // data.output.forEach((e, i)=> {
-        var i = 1
+        let i = 1
         for (const e of splitSentances) {
-            console.log(e)
+            console.log("layer1", e)
             await this.nextLine(e).then(d => {
-                console.log("handlAndThen",d)
                 acts[i] = "Act " + i.toString() + ": " + d
-                console.log(acts[i]);
+                console.log("layer2: ", acts[i]);
             })
             i += 1
         }
-        console.log(acts)
+        console.log("------ for loop done -----", acts)
         return acts
 
     }
