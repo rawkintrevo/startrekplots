@@ -6,10 +6,10 @@ class InputForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            value: 'Enter a few words to start your Plot here.',
-            resp: 'Enter a prompt and submit. Another thing to say.',
+            value: 'Enter a seed to start your Plot here.',
+            resp: Array('Enter a prompt and submit.'),
             actPrompts: [],
-            awaitPrompts: false
+
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -30,15 +30,21 @@ class InputForm extends React.Component {
     }
 
     handleChange(event) {    this.setState({value: event.target.value});  }
+
     handleSubmit(event) {
         // alert('An essay was submitted: ' + this.state.value);
-        this.setState({resp: "Waiting on plot.", awaitPrompts: true})
+        this.setState({resp: ["Plot will appear here."], value: ["Computing new story..."]})
         // Simple POST request with a JSON body using fetch
         this.nextLine(this.state.value).then(e => {
-            console.log('submit', e)
-            this.setState({resp: e})
+            // console.log('submit', e)
+            this.setState({resp: Array(e), value: "Beep. Bop. Beep. Boop. (That's computer for 'still working')."})
+            return e
             }
-        )
+        ).then(e => {
+            this.andThen(e).then(s => {
+                this.setState({resp: s, value: "All done. Enter another plot here to play again."})
+            })
+        })
         event.preventDefault();
     }
 
@@ -61,11 +67,9 @@ class InputForm extends React.Component {
             console.log("layer1", e)
             await this.nextLine(e).then(d => {
                 acts[i] = "Act " + i.toString() + ": " + d
-                console.log("layer2: ", acts[i]);
             })
             i += 1
         }
-        console.log("------ for loop done -----", acts)
         return acts
 
     }
@@ -88,13 +92,20 @@ class InputForm extends React.Component {
             <div>
                 <form onSubmit={this.handleSubmit}>
                     <label>
-                        Prompt:
-                        <textarea value={this.state.value} onChange={this.handleChange} />        </label>
+                        <input type="text" size="64" value={this.state.value} onChange={this.handleChange} />        </label>
                     <input type="submit" value="Submit" />
                 </form>
                 <p/>
-                <p>{this.state.resp}</p>
-                <button onClick={this.handleAndThen}>And then</button>
+                <p>{
+                    // console.log('Render', this.state.resp)
+                    this.state.resp.map(a => {
+                        console.log(a)
+                        return(
+                            <p>{a}</p>
+                    )
+                    })
+                }</p>
+
             </div>
         );
     }
