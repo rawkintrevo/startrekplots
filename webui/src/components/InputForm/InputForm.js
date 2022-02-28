@@ -24,8 +24,13 @@ class InputForm extends React.Component {
         };
         var resp = await fetch('https://e88ff614.us-south.apigw.appdomain.cloud/startrek_plots/v1', requestOptions)
             .then(response => response.json())
-            .then(data => {return data.output[0][1]; })//this.setState({ resp: data.output[0][1]}));
-        console.log("nextLine", resp)
+            .then(data => {
+                if ('output' in data) {
+                    return data.output[0][1];
+                } else { return s}})
+            .catch(e => {
+                console.error("Err ln 29: ", e)
+            })
         return resp;
     }
 
@@ -36,7 +41,6 @@ class InputForm extends React.Component {
         this.setState({resp: ["Plot will appear here."], value: ["Computing new story..."]})
         // Simple POST request with a JSON body using fetch
         this.nextLine(this.state.value).then(e => {
-            // console.log('submit', e)
             this.setState({resp: Array(e), value: "Beep. Bop. Beep. Boop. (That's computer for 'still working')."})
             return e
             }
@@ -45,11 +49,13 @@ class InputForm extends React.Component {
                 this.setState({resp: s, value: "All done. Enter another plot here to play again."})
             })
         })
+            .catch(e => {
+                console.error("Err ln 53: ", e)
+            })
         event.preventDefault();
     }
 
     async andThen(text) {
-        console.log("---------------- andThen called ---------------")
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -57,16 +63,19 @@ class InputForm extends React.Component {
         };
         const splitSentances = await fetch('https://e88ff614.us-south.apigw.appdomain.cloud/startrek_plots/sent_split', requestOptions)
             .then(response => response.json())
-            .then(data => {return data.output});
+            .then(data => {return data.output})
+            .catch(e => {
+                console.error("Err ln 68: ", e)
+            });
 
-        console.log('--- The Split Sentances', splitSentances);
         const acts = [];
         // data.output.forEach((e, i)=> {
         let i = 1
         for (const e of splitSentances) {
-            console.log("layer1", e)
             await this.nextLine(e).then(d => {
                 acts[i] = "Act " + i.toString() + ": " + d
+            }).catch(e => {
+                console.error("Err ln 68: ", e)
             })
             i += 1
         }
@@ -88,6 +97,7 @@ class InputForm extends React.Component {
     }
 
     render() {
+        let k = 0
         return (
             <div>
                 <form onSubmit={this.handleSubmit}>
@@ -96,15 +106,16 @@ class InputForm extends React.Component {
                     <input type="submit" value="Submit" />
                 </form>
                 <p/>
-                <p>{
-                    // console.log('Render', this.state.resp)
-                    this.state.resp.map(a => {
-                        console.log(a)
-                        return(
-                            <p>{a}</p>
-                    )
-                    })
-                }</p>
+                <div>
+                    <code>{
+                        this.state.resp.map((a,i) => {
+                            k += 1
+                            return(
+                                <p key="{k}">{a}</p>
+                        )
+                        })
+                    }</code>
+                </div>
 
             </div>
         );
