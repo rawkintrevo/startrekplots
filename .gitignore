@@ -6,6 +6,8 @@ openwhisk/my_model/
 *.imi
 *.iml
 
+
+
 webui/build
 webui/node_modules
 webui/package.lock
@@ -33,3 +35,5 @@ webui/.env.production.local
 webui/npm-debug.log*
 webui/yarn-debug.log*
 webui/yarn-error.log*
+
+webui/.firebase

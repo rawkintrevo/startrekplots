@@ -3,7 +3,7 @@ import sys
 def main(params):
     import re
     alphabets= "([A-Za-z])"
-    prefixes = "(Mr|St|Mrs|Ms|Dr|Lt)[.]"
+    prefixes = "(Mr|St|Mrs|Ms|Dr|Lt|Cdr)[.]"
     suffixes = "(Inc|Ltd|Jr|Sr|Co)"
     starters = "(Mr|Mrs|Ms|Dr|He\s|She\s|It\s|They\s|Their\s|Our\s|We\s|But\s|However\s|That\s|This\s|Wherever)"
     acronyms = "([A-Z][.][A-Z][.](?:[A-Z][.])?)"
